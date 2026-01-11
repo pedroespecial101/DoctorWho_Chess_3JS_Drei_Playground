@@ -26,6 +26,7 @@ const playActionOnce = (action, speed = 1.0) => {
 
         // Calculate duration based on clip length and speed
         const duration = (action.getClip().duration / speed) * 1000
+        console.log(`Playing action: ${action.getClip().name}, Duration: ${duration.toFixed(0)}ms`)
 
         setTimeout(() => {
             resolve()

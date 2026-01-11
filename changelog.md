@@ -9,7 +9,8 @@ All notable changes to this project will be documented in this file.
 - Created `README.md` with project documentation, verification instructions, and notes for future AI agents.
 
 ### Fixed
-- Fixed animation name mismatch: GLB uses `stop_walking` not `walk_stop`
+- Fixed T-pose issue where character would not animate: Removed `scene.clone()` in `Player.jsx` as it breaks mapping between SkinnedMeshes and Biped/Bones.
+- Fixed animation name mismatch: GLB uses `stop_walking` not `walk_stop`.
 
 ## [0.1.0] - 2026-01-11
 

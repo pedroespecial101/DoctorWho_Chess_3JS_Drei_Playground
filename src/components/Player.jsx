@@ -20,25 +20,24 @@ function AnimatedModel({
     const { scene, animations } = useGLTF(url)
     const { actions, names } = useAnimations(animations, group)
 
-    // Clone scene to avoid issues with reuse
-    const clonedScene = scene.clone()
-
+    // Notify when actions are ready
     useEffect(() => {
         if (actions && Object.keys(actions).length > 0) {
-            console.log('Available animations:', names)
+            console.log('Animation actions initialized:', names)
             onActionsReady?.(actions, names)
         }
     }, [actions, names, onActionsReady])
 
+    // Notify when model is loaded/changed
     useEffect(() => {
-        if (clonedScene && onLoad) {
-            onLoad(clonedScene)
+        if (scene && onLoad) {
+            onLoad(scene)
         }
-    }, [clonedScene, onLoad])
+    }, [scene, onLoad])
 
     return (
-        <group ref={group} position={position} scale={scale}>
-            <primitive object={clonedScene} />
+        <group ref={group} position={position} scale={scale} dispose={null}>
+            <primitive object={scene} />
         </group>
     )
 }
