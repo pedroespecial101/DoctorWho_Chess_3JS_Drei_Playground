@@ -13,21 +13,13 @@ export default {
     actions: ['walk40frame'],
 
     sequence: async (actions, speed = 1.0) => {
-        console.log('Debug 5x walk start')
+        console.log('Starting debug walk sequence at speed:', speed)
 
-        const action = actions['walk40frame']
-        if (!action) {
-            console.error('Action "walk40frame" not found')
-            return
-        }
-
-        // Just loop and play - no manual position hacking needed if root motion works!
         for (let i = 0; i < 5; i++) {
-            console.log(`Walk ${i + 1}/5`)
-            await playActionOnce(action, speed)
-            // NO reset—motion accumulates!
+            console.log(`Debug walk cycle ${i + 1}/5`)
+            await playActionOnce(actions['walk40frame'], speed)
         }
 
-        console.log('Complete')
+        console.log('Debug walk sequence complete')
     }
 }

@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.4] - 2026-01-11
+
+### Fixed
+- **Root Motion Fix**: Reverted manual position tracking hacks in `Player.jsx` and implemented a proper `reset = false` strategy.
+  - **Reverted**: `Player.jsx` to original clean state (removed `useFrame` and manual position/group Ref logic).
+  - **Updated**: `walk-debug.js` to use a simple loop over `playActionOnce` without manual position additions.
+  - **New**: `src/animations/utils.js` specifically for the `playActionOnce` helper that preserves root motion (`reset = false`).
+  - **Result**: Character now accumulates forward motion smoothly without snapping back to origin.
+
 ## [0.1.3] - 2026-01-11
 
 ### Fixed
