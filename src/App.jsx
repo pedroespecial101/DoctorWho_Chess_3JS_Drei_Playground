@@ -13,6 +13,8 @@ function App() {
     const { setAnimations, current, setCurrent, speed, setPlayingAction } = useAnimationStore()
     const [modelActions, setModelActions] = useState(null)
     const [availableActions, setAvailableActions] = useState([])
+    const [worldPos, setWorldPos] = useState(null)
+    const [groupRef, setGroupRef] = useState(null)
 
     // Initialize animation registry in store
     useEffect(() => {
@@ -35,9 +37,11 @@ function App() {
 
 
     // Handle when model actions become available
-    const handleActionsReady = useCallback((actions, names) => {
+    const handleActionsReady = useCallback((actions, names, worldPos, groupRef) => {
         setModelActions(actions)
         setAvailableActions(names)
+        setWorldPos(worldPos)
+        setGroupRef(groupRef)
         console.log('Model actions ready:', names)
     }, [])
 
@@ -60,10 +64,11 @@ function App() {
         })
 
         // Configure and play
-        action.reset()
+        // AVOID .reset() entirely—use .play() + time clamping for manual mode buttons
         action.clampWhenFinished = true
         action.loop = THREE.LoopOnce
         action.timeScale = speed
+        action.time = 0
         action.fadeIn(0.2)
         action.play()
 
@@ -93,12 +98,13 @@ function App() {
         console.log('Starting sequence:', animDef.name)
 
         try {
-            await animDef.sequence(modelActions, speed)
+            // Pass worldPos and groupRef to sequence callback
+            await animDef.sequence(modelActions, speed, worldPos, groupRef)
             console.log('Sequence complete')
         } catch (err) {
             console.error('Sequence error:', err)
         }
-    }, [modelActions, speed])
+    }, [modelActions, speed, worldPos, groupRef])
 
     /**
      * Play a single action in manual mode

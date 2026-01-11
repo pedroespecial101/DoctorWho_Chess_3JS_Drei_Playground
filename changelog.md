@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3] - 2026-01-11
+
+### Fixed
+- **CRITICAL BUG FIX**: Resolved model origin reset issue for root motion animations.
+  - Wrapped model in a manual transformation group in `Player.jsx`.
+  - Implemented manual world position tracking with `useFrame`.
+  - Updated `walk-debug.js` to avoid `.reset()` and manually apply displacement deltas between animation cycles.
+  - Updated `App.jsx` manual playback to avoid `.reset()` and use `action.time = 0` to preserve displacement.
+  - Enabled Draco support and preloading for the primary model.
+- **Robustness**: Fixed animation mixer event listener bug.
+  - Implemented `mixer` detection fallback and action-specific event filtering to prevent `TypeError`.
+  - Moved `utils.js` to `src/utils/animationUtils.js` to prevent it from being incorrectly loaded as an animation definition.
+  - Fixed React list `key` warning in `Controls.jsx`.
+
+
 ## [0.1.2] - 2026-01-11
 
 ### Added

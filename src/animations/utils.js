@@ -1,33 +1,55 @@
 /**
- * Animation Utilities
- */
-
-/**
- * Helper to play an action and wait for it to complete
- * @param {THREE.AnimationAction} action - The animation action to play
- * @param {number} speed - Playback speed multiplier
- * @returns {Promise} Resolves when animation completes
+ * Play a single action once returning a promise that resolves when it finishes.
+ * critically, this does NOT reset the action, allowing root motion to accumulate.
+ * 
+ * @param {THREE.AnimationAction} action 
+ * @param {number} speed 
+ * @returns {Promise<void>}
  */
 export const playActionOnce = (action, speed = 1.0) => {
     return new Promise((resolve) => {
-        if (!action) {
-            console.warn('Action not found')
-            resolve()
-            return
-        }
+        action.reset = false;  // CRITICAL: Preserve root motion
+        action.timeScale = speed;
+        action.clampWhenFinished = true;
+        action.play();
 
-        // Configure for single play
-        action.clampWhenFinished = true
-        action.loop = 2200 // THREE.LoopOnce (corresponds to THREE.LoopOnce in Three.js)
-        action.timeScale = speed
-        action.reset()
-        action.play()
+        const onFinish = (e) => {
+            if (e.action === action) {
+                // We do NOT stop the action here if we want the final pose to hold via clampWhenFinished
+                // But typically for sequence chaining we might unwanted effects if we don't handle it right.
+                // However, the instruction says:
+                // "return new Promise((resolve) => { ... action.stop(); ... resolve(); })"
+                // BUT the instructions also say "sequence: ... await playActionOnce ... // NO reset—motion accumulates!"
+                // Let's stick strictly to the user instruction provided in step 0:
+                /* 
+                   const onFinish = () => {
+                     action.stop(); 
+                     action.removeEventListener('finished', onFinish);
+                     resolve();
+                   };
+                */
+                // Wait, if we stop the action, the model might snap back depending on settings.
+                // However, `action.reset = false` usually implies we want to keep the state.
+                // Let's look closely at the user request logic.
+                // "3. In Player.jsx, ensure model <group scale={anim.scale}> has NO position={[0,0,0]} override."
+                // "Test: Select "Debug 5x Walk" → Sequence → smooth 5-forward chain"
 
-        // Calculate duration based on clip length and speed
-        const duration = (action.getClip().duration / speed) * 1000
+                // If I stop the action, does the root motion persist?
+                // The user provided snippet in step 0, #2 says:
+                /*
+                  const onFinish = () => {
+                    action.stop();
+                    action.removeEventListener('finished', onFinish);
+                    resolve();
+                  };
+                */
+                // I will follow the user's snippet exactly.
 
-        setTimeout(() => {
-            resolve()
-        }, duration)
-    })
-}
+                action.stop();
+                action.getMixer().removeEventListener('finished', onFinish);
+                resolve();
+            }
+        };
+        action.getMixer().addEventListener('finished', onFinish);
+    });
+};

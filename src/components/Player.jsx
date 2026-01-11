@@ -1,9 +1,11 @@
 import { Suspense, useRef, useEffect, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useGLTF, useAnimations, Environment } from '@react-three/drei'
-import * as THREE from 'three'
 import { Grid } from './Grid'
 import { useAnimationStore } from '../store/animationStore'
+
+const defaultModel = '/models/Master_start_walk–stop_2.glb'
+useGLTF.preload(defaultModel, true) // Enable draco
 
 /**
  * Animated Model Component
@@ -16,9 +18,9 @@ function AnimatedModel({
     onActionsReady,
     onLoad
 }) {
-    const group = useRef()
+    const groupRef = useRef()
     const { scene, animations } = useGLTF(url)
-    const { actions, names } = useAnimations(animations, group)
+    const { actions, names } = useAnimations(animations, groupRef)
 
     // Notify when actions are ready
     useEffect(() => {
@@ -36,7 +38,7 @@ function AnimatedModel({
     }, [scene, onLoad])
 
     return (
-        <group ref={group} position={position} scale={scale} dispose={null}>
+        <group ref={groupRef} position={position} scale={scale}>
             <primitive object={scene} />
         </group>
     )
@@ -59,13 +61,11 @@ function LoadingFallback() {
  * Main 3D canvas with model loading, animations, and controls
  */
 export function Player({ onActionsReady }) {
-    const { current, speed, setPlayingAction } = useAnimationStore()
+    const { current, speed } = useAnimationStore()
     const [modelActions, setModelActions] = useState(null)
-    const [actionNames, setActionNames] = useState([])
 
     const handleActionsReady = (actions, names) => {
         setModelActions(actions)
-        setActionNames(names)
         onActionsReady?.(actions, names)
     }
 

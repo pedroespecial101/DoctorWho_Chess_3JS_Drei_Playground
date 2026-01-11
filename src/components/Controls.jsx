@@ -35,9 +35,9 @@ export function Controls({ onPlaySequence, onPlayAction, availableActions = [] }
                     onChange={handleAnimationChange}
                 >
                     <option value="">Select an animation...</option>
-                    {animations.map((anim) => (
-                        <option key={anim.name} value={anim.name}>
-                            {anim.name}
+                    {animations.map((anim, index) => (
+                        <option key={`${anim.name || anim._filename || index}-${index}`} value={anim.name}>
+                            {anim.name || 'Unnamed Animation'}
                         </option>
                     ))}
                 </select>

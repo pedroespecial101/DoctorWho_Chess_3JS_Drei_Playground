@@ -3,7 +3,7 @@
  * Uses the Master_start_walk–stop_2.glb model with walk_start, walk40frame, walk_stop animations
  */
 
-import { playActionOnce } from './utils'
+import { playActionOnce } from '../utils/animationUtils'
 
 
 export default {
