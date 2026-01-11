@@ -1,0 +1,41 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [0.1.1] - 2026-01-11
+
+### Added
+- Added `.gitignore` to exclude build artifacts, dependencies, and system files.
+- Created `README.md` with project documentation, verification instructions, and notes for future AI agents.
+
+### Fixed
+- Fixed animation name mismatch: GLB uses `stop_walking` not `walk_stop`
+
+## [0.1.0] - 2026-01-11
+
+### Added
+- **Project Foundation**
+  - Initialized Vite React project with package.json
+  - Configured vite.config.js with React plugin and port 3000
+  - Created index.html entry point
+
+- **Core Components**
+  - `src/components/Player.jsx` - R3F Canvas with GLB loading, useAnimations, OrbitControls, lighting, and environment
+  - `src/components/Controls.jsx` - Animation dropdown, speed slider (0.1x-2x), Sequence/Manual buttons, dynamic action buttons
+  - `src/components/Grid.jsx` - 8x8 chessboard wireframe with checkerboard pattern
+
+- **Animation System**
+  - `src/store/animationStore.js` - Zustand store for animations, current selection, speed, and mode
+  - `src/hooks/useAnimationRegistry.js` - Dynamic import of animation files using Vite glob
+  - `src/animations/walk-sequence.js` - First animation definition using Master_start_walk-stop_2.glb
+
+- **Styling**
+  - `src/index.css` - Dark sci-fi themed UI with Doctor Who aesthetic
+  - Glassmorphism controls panel
+  - Gradient-styled speed slider with custom thumb
+
+- **Features**
+  - Animation speed control (0.1x to 2x playback speed)
+  - Sequence mode for programmed animation chains
+  - Manual mode for individual action triggering
+  - Hot-reload support for animation definition files
