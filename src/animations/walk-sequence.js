@@ -3,36 +3,8 @@
  * Uses the Master_start_walk–stop_2.glb model with walk_start, walk40frame, walk_stop animations
  */
 
-/**
- * Helper to play an action and wait for it to complete
- * @param {THREE.AnimationAction} action - The animation action to play
- * @param {number} speed - Playback speed multiplier
- * @returns {Promise} Resolves when animation completes
- */
-const playActionOnce = (action, speed = 1.0) => {
-    return new Promise((resolve) => {
-        if (!action) {
-            console.warn('Action not found')
-            resolve()
-            return
-        }
+import { playActionOnce } from './utils'
 
-        // Configure for single play
-        action.clampWhenFinished = true
-        action.loop = 2200 // THREE.LoopOnce
-        action.timeScale = speed
-        action.reset()
-        action.play()
-
-        // Calculate duration based on clip length and speed
-        const duration = (action.getClip().duration / speed) * 1000
-        console.log(`Playing action: ${action.getClip().name}, Duration: ${duration.toFixed(0)}ms`)
-
-        setTimeout(() => {
-            resolve()
-        }, duration)
-    })
-}
 
 export default {
     name: 'Three Walk Loops',

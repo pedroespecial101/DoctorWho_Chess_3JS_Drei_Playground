@@ -2,7 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.1] - 2026-01-11
+## [0.1.2] - 2026-01-11
+
+### Added
+- Created `src/animations/walk-debug.js`: A new animation sequence with 5 consecutive `walk40frame` loops for easier debugging.
+- Created `src/animations/utils.js`: Extracted animation helper `playActionOnce` to a shared utility file.
+- Set `Debug 5x Walk` as the default animation sequence on application load in `src/App.jsx`.
+
+### Changed
+- Refactored `src/animations/walk-sequence.js` to use the shared `playActionOnce` utility.
+
 
 ### Added
 - Added `.gitignore` to exclude build artifacts, dependencies, and system files.

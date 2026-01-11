@@ -10,7 +10,7 @@ import * as THREE from 'three'
  */
 function App() {
     const { registry, loading, error } = useAnimationRegistry()
-    const { setAnimations, current, speed, setPlayingAction } = useAnimationStore()
+    const { setAnimations, current, setCurrent, speed, setPlayingAction } = useAnimationStore()
     const [modelActions, setModelActions] = useState(null)
     const [availableActions, setAvailableActions] = useState([])
 
@@ -18,9 +18,21 @@ function App() {
     useEffect(() => {
         if (registry.length > 0) {
             setAnimations(registry)
+
+            // Set default animation on load
+            if (!current) {
+                const debugAnim = registry.find(a => a.name === 'Debug 5x Walk')
+                if (debugAnim) {
+                    setCurrent(debugAnim)
+                } else {
+                    setCurrent(registry[0])
+                }
+            }
+
             console.log('Loaded animation definitions:', registry.map(a => a.name))
         }
-    }, [registry, setAnimations])
+    }, [registry, setAnimations, setCurrent, current])
+
 
     // Handle when model actions become available
     const handleActionsReady = useCallback((actions, names) => {
