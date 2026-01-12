@@ -26,9 +26,9 @@ function AnimatedModel({
     useEffect(() => {
         if (actions && Object.keys(actions).length > 0) {
             console.log('Animation actions initialized:', names)
-            onActionsReady?.(actions, names)
+            onActionsReady?.(actions, names, scene, groupRef)
         }
-    }, [actions, names, onActionsReady])
+    }, [actions, names, scene, groupRef, onActionsReady])
 
     // Notify when model is loaded/changed
     useEffect(() => {
@@ -64,9 +64,9 @@ export function Player({ onActionsReady }) {
     const { current, speed } = useAnimationStore()
     const [modelActions, setModelActions] = useState(null)
 
-    const handleActionsReady = (actions, names) => {
+    const handleActionsReady = (actions, names, scene, groupRef) => {
         setModelActions(actions)
-        onActionsReady?.(actions, names)
+        onActionsReady?.(actions, names, scene, groupRef)
     }
 
     // Apply speed to all actions when speed changes

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.5] - 2026-01-12
+
+### Added
+- **New Master Root Model**: Integrated `Master_start_walk_stop_root-animation_110126.glb` with baked root animations.
+- **Root Component**: Generated `src/components/MasterRoot.jsx` using `gltfjsx` to provide a reference structure for the new model.
+
+### Changed
+- **Root Motion Accumulation**: Implemented a robust root motion system in `walk-debug.js`.
+  - Now extracts displacement from the "root" bone at the end of each cycle.
+  - Applies bone displacement to the group's world position.
+  - Manually resets bone position and stops the animation to ensure a clean start for subsequent loops.
+- **Utility Improvements**: Updated `playActionOnce` in `src/animations/utils.js` to avoid automatic `.stop()`, allowing users to read bone offsets before resetting state.
+- **Architecture**: Enhanced `Player.jsx` and `App.jsx` to pass 3D scene and group references to animation sequence definitions.
+
 ## [0.1.4] - 2026-01-11
 
 ### Fixed

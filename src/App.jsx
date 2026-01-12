@@ -13,7 +13,7 @@ function App() {
     const { setAnimations, current, setCurrent, speed, setPlayingAction } = useAnimationStore()
     const [modelActions, setModelActions] = useState(null)
     const [availableActions, setAvailableActions] = useState([])
-    const [worldPos, setWorldPos] = useState(null)
+    const [scene, setScene] = useState(null)
     const [groupRef, setGroupRef] = useState(null)
 
     // Initialize animation registry in store
@@ -37,10 +37,10 @@ function App() {
 
 
     // Handle when model actions become available
-    const handleActionsReady = useCallback((actions, names, worldPos, groupRef) => {
+    const handleActionsReady = useCallback((actions, names, scene, groupRef) => {
         setModelActions(actions)
         setAvailableActions(names)
-        setWorldPos(worldPos)
+        setScene(scene)
         setGroupRef(groupRef)
         console.log('Model actions ready:', names)
     }, [])
@@ -98,13 +98,13 @@ function App() {
         console.log('Starting sequence:', animDef.name)
 
         try {
-            // Pass worldPos and groupRef to sequence callback
-            await animDef.sequence(modelActions, speed, worldPos, groupRef)
+            // Pass scene and groupRef to sequence callback
+            await animDef.sequence(modelActions, speed, scene, groupRef)
             console.log('Sequence complete')
         } catch (err) {
             console.error('Sequence error:', err)
         }
-    }, [modelActions, speed, worldPos, groupRef])
+    }, [modelActions, speed, scene, groupRef])
 
     /**
      * Play a single action in manual mode
