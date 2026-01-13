@@ -1,33 +1,42 @@
-/**
- * Play a single action once returning a promise that resolves when it finishes.
- * critically, this does NOT reset the action, allowing root motion to accumulate.
- * 
- * @param {THREE.AnimationAction} action 
- * @param {number} speed 
- * @returns {Promise<void>}
- */
-export const playActionOnce = (action, speed = 1.0) => {
-  return new Promise((resolve) => {
-    action.reset = false;  // PRESERVE root motion!
-    action.timeScale = speed;
-    action.clampWhenFinished = true;
-    action.loop = 2200; // THREE.LoopOnce. Using literal to avoid import dependency if not available
+import { useAnimationStore } from '../store/animationStore'
 
-    // In some versions of three, LoopOnce is the default or accessible via constants.
-    // If you have THREE imported, use THREE.LoopOnce.
-    if (typeof action.setLoop === 'function') {
-      // action.setLoop(1, 1); // LoopOnce
+/**
+ * Play an animation action with smooth transition by updating the global store.
+ * This triggers the reactive transition logic in the Player component.
+ * 
+ * @param {THREE.AnimationAction} action The action to play
+ * @param {number} speed Playback speed
+ * @returns {Promise<void>} Resolves when the animation duration has passed
+ */
+export const playAction = (action, speed = 1.0) => {
+  return new Promise((resolve) => {
+    if (!action) {
+      resolve();
+      return;
     }
 
-    action.play();
+    const actionName = action.getClip().name;
+    console.log(`[Sequence] Triggering: ${actionName} at speed: ${speed}`);
 
-    const onFinish = () => {
-      action.removeEventListener('finished', onFinish);
-      // Resolve first so caller can read final bone positions
-      resolve();
-      // Note: caller should call action.stop() if they want to reset for next cycle
-      // we don't call it here to allow root motion capture
-    };
-    action.addEventListener('finished', onFinish);
+    const state = useAnimationStore.getState();
+    const current = state.current;
+
+    // Calculate speed logic (mirrors AnimatedModel)
+    const actionTargetSpeed = speed || state.speedMap[actionName] || current?.configSpeed || 1.0;
+    const effectiveSpeedForTiming = state.speed * actionTargetSpeed;
+
+    // Update store (triggers visual change)
+    state.setActiveAction(actionName, speed);
+
+    // Wait for duration
+    const totalDuration = (action.getClip().duration / effectiveSpeedForTiming) * 1000;
+    setTimeout(resolve, totalDuration);
   });
+};
+
+/**
+ * Legacy wrapper
+ */
+export const playActionOnce = (action, speed = 1.0) => {
+  return playAction(action, speed);
 };

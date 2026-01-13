@@ -3,14 +3,13 @@ import { Player } from './components/Player'
 import { Controls } from './components/Controls'
 import { useAnimationRegistry } from './hooks/useAnimationRegistry'
 import { useAnimationStore } from './store/animationStore'
-import * as THREE from 'three'
 
 /**
  * Main Application Component
  */
 function App() {
     const { registry, loading, error } = useAnimationRegistry()
-    const { setAnimations, current, setCurrent, speed, setPlayingAction } = useAnimationStore()
+    const { setAnimations, current, setCurrent, speed } = useAnimationStore()
     const [modelActions, setModelActions] = useState(null)
     const [availableActions, setAvailableActions] = useState([])
     const [scene, setScene] = useState(null)
@@ -46,42 +45,6 @@ function App() {
     }, [])
 
     /**
-     * Play a single action once
-     */
-    const playActionOnce = useCallback((actionName) => {
-        if (!modelActions || !modelActions[actionName]) {
-            console.warn(`Action "${actionName}" not found`)
-            return
-        }
-
-        const action = modelActions[actionName]
-
-        // Stop all other actions
-        Object.values(modelActions).forEach(a => {
-            if (a && a !== action) {
-                a.fadeOut(0.2)
-            }
-        })
-
-        // Configure and play
-        // AVOID .reset() entirely—use .play() + time clamping for manual mode buttons
-        action.clampWhenFinished = true
-        action.loop = THREE.LoopOnce
-        action.timeScale = speed
-        action.time = 0
-        action.fadeIn(0.2)
-        action.play()
-
-        setPlayingAction(actionName)
-
-        // Clear playing state after animation completes
-        const duration = (action.getClip().duration / speed) * 1000
-        setTimeout(() => {
-            setPlayingAction(null)
-        }, duration + 200)
-    }, [modelActions, speed, setPlayingAction])
-
-    /**
      * Play the programmed sequence from the animation definition
      */
     const handlePlaySequence = useCallback(async (animDef) => {
@@ -110,8 +73,8 @@ function App() {
      * Play a single action in manual mode
      */
     const handlePlayAction = useCallback((actionName) => {
-        playActionOnce(actionName)
-    }, [playActionOnce])
+        useAnimationStore.getState().setActiveAction(actionName)
+    }, [])
 
     if (loading) {
         return (

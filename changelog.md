@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.10] - 2026-01-13
+
+### Added
+- **Per-Animation Speed Control**: Implemented support for setting different speeds for each animation call within a sequence.
+- **Speed Priority System**: Transitions now prioritize speed overrides passed directly to `playAction`, then fall back to configuration-based speed maps.
+
+### Changed
+- **Robot Sequence Tuning**: Overrode individual speeds in `robot-in-place.js` (Walk Start: 0.8, Walk: 0.6, Walk Stop: 0.8) for better movement feel.
+- **Store Architecture**: Updated `useAnimationStore` to track `activeAction` as an object containing both the name and a session-specific speed override.
+
+## [0.1.9] - 2026-01-13
+
+### Added
+- **Per-Animation Speed Control**: Added `configSpeed` support to animation definitions.
+- **Robot Speed Adjustment**: Set `configSpeed: 0.7` in `robot-in-place.js` to slow down the baked-in animations.
+
+### Changed
+- **Global Speed Sync**: Updated `Player.jsx` and `playAction` utility to multiply UI speed by the animation's specific `configSpeed`.
+
+## [0.1.8] - 2026-01-13
+
+### Changed
+- **Reactive Transition System**: Refactored the animation system to use a reactive "previous/current" cross-fade pattern in `Player.jsx`.
+- **Zustand Store Update**: Added `activeActionName` to track the current animation globally, ensuring smooth transitions even in manual mode.
+- **Sequence Simplification**: Updated `playAction` utility and animation sequences to leverage the new reactive architecture.
+- **Improved UX**: Manual button presses now smoothly cross-fade into each other.
+
+## [0.1.7] - 2026-01-13
+
+### Changed
+- **Animation Transitions**: Re-implemented `playAction` in `src/animations/utils.js` to support smooth `fadeIn` and `fadeOut` patterns for transitions.
+- **Robot Sequence Update**: Refined the sequence in `robot-in-place.js` to follow the flow: Walk Start -> 4x Walk Loops -> Walk Stop -> Idle Settle.
+- **Improved Action Handling**: Integrated cross-fading logic into the robot sequence to ensure all transitions are fluid.
+
+## [0.1.6] - 2026-01-13
+
+### Added
+- **Robot In-Place Model**: Processed `public/models/robot_inPlace.glb` using `gltfjsx`.
+- **Robot Component**: Generated `src/components/RobotInPlace.jsx`.
+- **Robot Animation Sequence**: Created `src/animations/robot-in-place.js` with metadata-extracted names.
+- **In-Place Transitions**: Specifically configured the robot sequence for in-place testing without motion accumulation.
+
 ## [0.1.5] - 2026-01-12
 
 ### Added

@@ -8,6 +8,17 @@ const defaultModel = '/models/Master_start_walk–stop_2.glb'
 useGLTF.preload(defaultModel, true) // Enable draco
 
 /**
+ * Simple hook to track previous value
+ */
+function usePrevious(value) {
+    const ref = useRef()
+    useEffect(() => {
+        ref.current = value
+    }, [value])
+    return ref.current
+}
+
+/**
  * Animated Model Component
  * Loads a GLB and wires up animations via useAnimations hook
  */
@@ -21,6 +32,47 @@ function AnimatedModel({
     const groupRef = useRef()
     const { scene, animations } = useGLTF(url)
     const { actions, names } = useAnimations(animations, groupRef)
+    const { activeAction, speed, speedMap, current } = useAnimationStore()
+    const previousName = usePrevious(activeAction.name)
+
+    // Handle reactive Transitions
+    useEffect(() => {
+        const { name, speedOverride } = activeAction
+
+        if (name && actions[name]) {
+            console.log(`Transitioning: ${previousName} -> ${name}`)
+
+            if (previousName && actions[previousName]) {
+                actions[previousName].fadeOut(0.2)
+            }
+
+            const nextAction = actions[name]
+
+            // Calculate effective speed for this action
+            // Priority: 1. speedOverride (from call), 2. speedMap (from config), 3. global configSpeed, 4. global UI speed
+            const actionTargetSpeed = speedOverride || speedMap[name] || current?.configSpeed || 1.0
+            const effectiveSpeed = speed * actionTargetSpeed
+
+            nextAction.reset()
+            nextAction.stop()
+            nextAction.setEffectiveTimeScale(effectiveSpeed)
+            nextAction.fadeIn(0.2)
+            nextAction.play()
+        }
+    }, [activeAction, actions, previousName, speed, speedMap, current?.configSpeed])
+
+    // Update speeds of ALL playing animations if global speed or specific maps change
+    useEffect(() => {
+        if (actions) {
+            Object.keys(actions).forEach(name => {
+                const action = actions[name]
+                if (action && action.isRunning()) {
+                    const actionTargetSpeed = speedMap[name] || current?.configSpeed || 1.0
+                    action.setEffectiveTimeScale(speed * actionTargetSpeed)
+                }
+            })
+        }
+    }, [speed, speedMap, actions, current?.configSpeed])
 
     // Notify when actions are ready
     useEffect(() => {
@@ -69,16 +121,6 @@ export function Player({ onActionsReady }) {
         onActionsReady?.(actions, names, scene, groupRef)
     }
 
-    // Apply speed to all actions when speed changes
-    useEffect(() => {
-        if (modelActions) {
-            Object.values(modelActions).forEach(action => {
-                if (action) {
-                    action.timeScale = speed
-                }
-            })
-        }
-    }, [speed, modelActions])
 
     return (
         <div className="canvas-container">

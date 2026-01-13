@@ -17,19 +17,31 @@ export const useAnimationStore = create((set, get) => ({
     // Animation playback speed (0.1 - 2.0)
     speed: 1.0,
 
-    // Currently playing action name (for UI highlighting)
-    playingAction: null,
+    // Map of per-action speed overrides
+    speedMap: {},
+
+    // Currently active action data (name and speed override)
+    activeAction: { name: null, speedOverride: null },
 
     // Actions
     setAnimations: (animations) => set({ animations }),
 
-    setCurrent: (animation) => set({ current: animation }),
+    setCurrent: (animation) => set({ current: animation, activeAction: { name: null, speedOverride: null }, speedMap: {} }),
 
     toggleManualMode: () => set((state) => ({ isManualMode: !state.isManualMode })),
 
     setSpeed: (speed) => set({ speed: Math.max(0.1, Math.min(2.0, speed)) }),
 
+    setActionSpeed: (name, speed) => set((state) => ({
+        speedMap: { ...state.speedMap, [name]: speed }
+    })),
+
     setPlayingAction: (actionName) => set({ playingAction: actionName }),
+
+    setActiveAction: (name, speedOverride = null) => set({
+        activeAction: { name, speedOverride },
+        playingAction: name
+    }),
 
     // Get current animation by name
     getAnimationByName: (name) => {
