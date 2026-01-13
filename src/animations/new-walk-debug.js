@@ -7,7 +7,7 @@ import { playActionOnce } from './utils'
 export default {
     name: 'Simple 3x Walk Loop',
     description: 'Pure 3x walking_RootBaked cycles. Tests root motion accumulation.',
-    glb: '/models/Master_start_walk_stop_root-animation_110126-transformed.glb',  // Your transformed GLB
+    glb: '/models/Master_start_walk_stop_root-animation_110126.glb',  // Your transformed GLB
     initialPosition: [0, 0, 0],
     scale: 1.5,
     actions: ['walking_RootBaked'],  // Exact name from your GLB

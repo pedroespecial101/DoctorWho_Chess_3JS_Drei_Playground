@@ -10,7 +10,7 @@ import { SkeletonUtils } from 'three-stdlib'
 
 export function Model(props) {
   const group = React.useRef()
-  const { scene, animations } = useGLTF('/Master_start_walk_stop_root-animation_110126.glb')
+  const { scene, animations } = useGLTF('/public/models/Master_start_walk_stop_root-animation_110126.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes, materials } = useGraph(clone)
   const { actions } = useAnimations(animations, group)
@@ -26,4 +26,4 @@ export function Model(props) {
   )
 }
 
-useGLTF.preload('/Master_start_walk_stop_root-animation_110126.glb')
+useGLTF.preload('/public/models/Master_start_walk_stop_root-animation_110126.glb')
